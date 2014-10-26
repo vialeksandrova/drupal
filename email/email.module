@@ -1,0 +1,52 @@
+<?php
+function email_block_info() {
+$blocks['user_custom'] = array('info' =>t('Email block custom for each user'),);
+return $blocks;
+}
+
+function email_form($form_in, &$form_state){
+$form['wx_info_title'] = array (
+'#value' => t('Email'),
+);
+$form['wx_info']['email'] = array (
+'#type' => 'textfield',
+'#size' => 50,
+'#maxlengh' => 50,
+);
+$form['wx_info']['email_submit'] = array (
+'#type' => 'submit',
+'#value' => t('Save'),
+);
+$form['#action'] = url('http://localhost/drupalProject/');
+$form['#submit'][] = 'email_form_submit';
+return $form;
+}
+function email_block_view($delta=''){ 
+$block['subject'] = t('Email Form');
+
+$temp = drupal_get_form('email_form'); //извиква формата ни
+$block_content = drupal_render($temp);//извиква функц. за показване на инфото от формата
+$block['content'] = $block_content;
+
+return $block;
+}
+
+function email_form_validate($form, &$form_state){
+$email = trim($form_state['values']['email']);
+if (!$email) {
+form_set_error('email', t('Field cannot be blank.'));
+}
+
+else{
+if(!valid_email_address($email)){
+form_set_error('email', t('Please enter valid email adress.'));
+}
+else{
+function email_form_submit($form, &$form_state){
+$email = trim($form_state['values']['email']);
+db_query("INSERT INTO {members} (email) VALUES('$email')");
+drupal_set_message(t('The form has been submitted.'));
+}
+}
+}}
+?>
