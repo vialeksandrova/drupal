@@ -1,0 +1,4 @@
+name = Email 
+description = A module that should allow us to assign email field .
+core = 7.x
+files[] = email.module
